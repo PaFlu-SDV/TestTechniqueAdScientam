@@ -30,16 +30,9 @@ public class ProductController : ControllerBase
     [HttpGet("{id:guid}")]
     public async Task<IActionResult> GetAsync([FromRoute] Guid id)
     { 
-        try
-        {
             var product = await _productHandler.GetAsync(id);
+            if(product == null) return NotFound();
             return Ok(ProductAdapter.ToProductModel(product));
-        }
-        catch (Exception ex)
-        {
-            return NotFound();
-        }
-
     }
 
     [HttpPost]

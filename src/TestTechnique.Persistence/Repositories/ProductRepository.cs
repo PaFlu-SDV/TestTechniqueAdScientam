@@ -1,3 +1,4 @@
+using TestTechnique.Domain.Exceptions;
 using TestTechnique.Domain.Models;
 using TestTechnique.Domain.Repositories;
 
@@ -22,7 +23,7 @@ public class ProductRepository : IProductRepository
         var product = await _dbContext.Products.FindAsync(id);
         if(product == null)
         {
-            throw new ArgumentNullException(id.ToString());
+            throw new EntityNotFoundException(id.ToString());
         }
         else
         {

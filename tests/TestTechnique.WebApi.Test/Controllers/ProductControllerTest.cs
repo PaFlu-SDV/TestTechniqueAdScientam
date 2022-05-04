@@ -18,7 +18,6 @@ public class ProductControllerTest
 {
     private readonly ProductController _productController;
     private readonly Mock<IProductHandler> _productHandler;
-    private readonly Mock<IProductRepository> _productRepository;
 
 
     public ProductControllerTest()
@@ -69,7 +68,7 @@ public class ProductControllerTest
         // Arrange
         _productHandler
             .Setup(x => x.GetAsync(It.IsAny<Guid>()))
-            .ReturnsAsync((ProductDto) null);
+            .ReturnsAsync(value: (ProductDto) null);
         
         // Act
         var response =  _productController.GetAsync(Guid.NewGuid());
