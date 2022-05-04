@@ -7,6 +7,8 @@ using Moq;
 using TestTechnique.Application.Commons;
 using TestTechnique.Application.Contracts;
 using TestTechnique.Domain.Models;
+using TestTechnique.Domain.Repositories;
+using TestTechnique.Persistence.Repositories;
 using TestTechnique.WebApi.Controllers;
 using Xunit;
 
@@ -16,6 +18,8 @@ public class ProductControllerTest
 {
     private readonly ProductController _productController;
     private readonly Mock<IProductHandler> _productHandler;
+    private readonly Mock<IProductRepository> _productRepository;
+
 
     public ProductControllerTest()
     {
@@ -50,7 +54,7 @@ public class ProductControllerTest
             .ReturnsAsync(new ProductDto());
         
         // Act
-        var response = await _productController.Get(Guid.NewGuid());
+        var response = await _productController.GetAsync(Guid.NewGuid());
     
         // Assert
         Assert.NotNull(response);
@@ -68,7 +72,7 @@ public class ProductControllerTest
             .ReturnsAsync((ProductDto) null);
         
         // Act
-        var response = await _productController.Get(Guid.NewGuid());
+        var response =  _productController.GetAsync(Guid.NewGuid());
     
         // Assert
         Assert.NotNull(response);
@@ -155,7 +159,7 @@ public class ProductControllerTest
         // Arrange
         _productHandler
             .Setup(x => x.GetAsync(It.IsAny<Guid>()))
-            .ReturnsAsync((ProductDto) null);
+            .ReturnsAsync(value: (ProductDto) null);
         _productHandler
             .Setup(x => x.DeleteAsync(It.IsAny<Guid>()));
         

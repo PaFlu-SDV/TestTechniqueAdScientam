@@ -1,5 +1,7 @@
+using TestTechnique.Application.Adapter;
 using TestTechnique.Application.Commons;
 using TestTechnique.Application.Contracts;
+using TestTechnique.Domain.Exceptions;
 using TestTechnique.Domain.Repositories;
 
 namespace TestTechnique.Application.Handlers;
@@ -15,26 +17,55 @@ public class ProductHandler : IProductHandler
 
     public Task<IEnumerable<ProductDto>> GetAllAsync()
     {
-        throw new NotImplementedException();
+        var products = new List<ProductDto>();
+        foreach (var prod in _productRepository.GetAllAsync().Result)
+        {
+            products.Add(ProductAdapter.ToProductDTO(prod));
+        }
+        return Task.FromResult(products.AsEnumerable());
     }
 
-    public Task<ProductDto> GetAsync(Guid id)
+    public async Task<ProductDto> GetAsync(Guid id)
     {
-        throw new NotImplementedException();
+        var dto = ProductAdapter.ToProductDTO(_productRepository.GetAsync(id).Result);
+        return dto;
     }
 
     public Task<Guid> AddAsync(ProductDto productDto)
     {
-        throw new NotImplementedException();
+        if(_productRepository.GetAsync(productDto.Id).Result != null)
+        {
+            throw new EntityNotFoundException();
+        }
+        else
+        {
+            return _productRepository.AddAsync(ProductAdapter.ToProductModel(productDto));
+        }
     }
 
-    public Task<ProductDto> UpdateAsync(ProductDto productDto)
+    public async Task<ProductDto> UpdateAsync(ProductDto productDto)
     {
-        throw new NotImplementedException();
+        if (_productRepository.GetAsync(productDto.Id).Result != null)
+        {
+            throw new EntityNotFoundException();
+        }
+        else
+        {
+            await _productRepository.UpdateAsync(ProductAdapter.ToProductModel(productDto));
+            return ProductAdapter.ToProductDTO(_productRepository.GetAsync(productDto.Id).Result);
+        }
     }
 
     public Task DeleteAsync(Guid id)
     {
-        throw new NotImplementedException();
+        if (_productRepository.GetAsync(id).Result != null)
+        {
+            throw new EntityNotFoundException();
+        }
+        else
+        {
+            var product = _productRepository.GetAsync(id).Result;
+            return _productRepository.DeleteAsync(product);
+        }
     }
 }

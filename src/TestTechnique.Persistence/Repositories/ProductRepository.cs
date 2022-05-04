@@ -14,12 +14,20 @@ public class ProductRepository : IProductRepository
 
     public Task<IEnumerable<Product>> GetAllAsync()
     {
-        throw new NotImplementedException();
+        return Task.Run(() => _dbContext.Products.ToList().AsEnumerable()); ;
     }
 
-    public Task<Product> GetAsync(Guid id)
+    public async Task<Product> GetAsync(Guid id)
     {
-        throw new NotImplementedException();
+        var product = await _dbContext.Products.FindAsync(id);
+        if(product == null)
+        {
+            throw new ArgumentNullException(id.ToString());
+        }
+        else
+        {
+            return product; 
+        }
     }
 
     public Task<Product> GetAsync(Guid id, bool asTracking)
@@ -27,9 +35,11 @@ public class ProductRepository : IProductRepository
         throw new NotImplementedException();
     }
 
-    public Task<Guid> AddAsync(Product entity)
+    public async Task<Guid> AddAsync(Product entity)
     {
-        throw new NotImplementedException();
+        await _dbContext.Products.AddAsync(entity);
+        await _dbContext.SaveChangesAsync();
+        return entity.Id;   
     }
 
     public Task<IEnumerable<Guid>> AddAsync(IEnumerable<Product> entities)
@@ -39,7 +49,9 @@ public class ProductRepository : IProductRepository
 
     public Task UpdateAsync(Product entity)
     {
-        throw new NotImplementedException();
+        _dbContext.Products.Update(entity);
+        return _dbContext.SaveChangesAsync();
+        
     }
 
     public Task UpdateAsync(IEnumerable<Product> entities)
@@ -49,7 +61,8 @@ public class ProductRepository : IProductRepository
 
     public Task DeleteAsync(Product entity)
     {
-        throw new NotImplementedException();
+        _dbContext.Remove(entity);
+        return _dbContext.SaveChangesAsync();
     }
 
     public Task DeleteAsync(IEnumerable<Product> entities)
@@ -57,8 +70,16 @@ public class ProductRepository : IProductRepository
         throw new NotImplementedException();
     }
 
-    public Task<Product> GetByNameAsync(string name)
+    public async Task<Product> GetByNameAsync(string name)
     {
-        throw new NotImplementedException();
+        var product = await _dbContext.Products.FindAsync(name);
+        if (product == null)
+        {
+            throw new ArgumentNullException(name);
+        }
+        else
+        {
+            return product;
+        }
     }
 }

@@ -11,14 +11,14 @@ public class Product : IEquatable<Product>
 
     public bool Equals(Product? other)
     {
-        if (ReferenceEquals(null, other)) return false;
+        if (other is null) return false;
         if (ReferenceEquals(this, other)) return true;
         return Id.Equals(other.Id) && Name == other.Name && Description == other.Description && Price == other.Price;
     }
 
     public override bool Equals(object? obj)
     {
-        if (ReferenceEquals(null, obj)) return false;
+        if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
         return obj.GetType() == GetType() && Equals((Product)obj);
     }
