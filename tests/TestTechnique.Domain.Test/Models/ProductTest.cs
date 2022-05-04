@@ -1,22 +1,24 @@
 using TestTechnique.Domain.Models;
 using Xunit;
 
-namespace TestTechnique.Domain.Test.Models;
-
-public class ProductTest
+namespace TestTechnique.Domain.Test.Models
 {
-    [Fact]
-    public void Product_Are_Equals()
+
+    public class ProductTest
     {
-        // Arrange
-        var productA = new Product { Name = "hWLpaHV" };
-        var productB = new Product { Name = "hWLpaHV" };
+        [Fact]
+        public void Product_Are_Equals()
+        {
+            // Arrange
+            var productA = new Product { Name = "hWLpaHV" };
+            var productB = new Product { Name = "hWLpaHV" };
 
-        // Act
-        var result = productA.Equals(productB);
+            // Act
+            var result = productA.Equals(productB);
 
-        // Assert
-        Assert.True(result);
-        Assert.Equal(productA, productB);
+            // Assert
+            Assert.True(result);
+            Assert.Equal(productA, productB);
+        }
     }
 }
