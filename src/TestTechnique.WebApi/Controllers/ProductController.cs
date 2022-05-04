@@ -1,6 +1,10 @@
 using Microsoft.AspNetCore.Mvc;
+using TestTechnique.Application.Adapter;
 using TestTechnique.Application.Commons;
 using TestTechnique.Application.Contracts;
+using TestTechnique.Domain.Exceptions;
+using TestTechnique.Domain.Repositories;
+using TestTechnique.Persistence.Repositories;
 
 namespace TestTechnique.WebApi.Controllers;
 
@@ -20,36 +24,68 @@ public class ProductController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> Get()
     {
-        var products = _productHandler.GetAsync(new Guid());
+        var products = await _productHandler.GetAllAsync();
         return Ok(products);
     }
-    
+
     [HttpGet("{id:guid}")]
-    public IActionResult Get([FromRoute] Guid id)
-    {
-        return Ok();
+    public async Task<IActionResult> GetAsync([FromRoute] Guid id)
+    { 
+        try
+        {
+            var product = await _productHandler.GetAsync(id);
+            return Ok(ProductAdapter.ToProductModel(product));
+        }
+        catch (Exception ex)
+        {
+            return NotFound();
+        }
+
     }
 
     [HttpPost]
     public async Task<IActionResult> Post([FromQuery] ProductDto product)
-    {
-        await _productRepository.AddAsync(product);
-        return NoContent();
-        _logger.LogInformation($"The {product.Name} has been added with the ID:{product.Id}.");
+    {   
+        try
+        {
+            await _productHandler.AddAsync(product);
+            _logger.LogInformation($"The {product.Name} has been added with the ID:{product.Id}.");
+            return CreatedAtAction("Get", product);
+        }
+        catch (EntityNotFoundException ex)
+        {
+            return NotFound();
+        }
     }
-    
+
     [HttpPut("{id:guid}")]
-    public IActionResult Put([FromHeader] Guid id, [FromRoute] ProductDto product)
+    public async Task<IActionResult> Put([FromHeader] Guid id, [FromRoute] ProductDto product)
     {
-        throw new NotImplementedException();
+        try
+        {
+            await _productHandler.UpdateAsync(product);
+            return new OkObjectResult(ProductAdapter.ToProductModel(product));
+        }
+        catch (EntityNotFoundException ex)
+        {
+            return NotFound();
+        }
     }
-    
+
     [HttpDelete]
     public async Task<IActionResult> Delete([FromHeader] Guid id)
     {
-        var product = new ProductDto { Id = id };
-        await _productHandler.DeleteAsync(product);
-        Console.Write("The product with ID: {0} has been deleted.", id);
-        return NotFound();
+        try
+        {
+            var toDeleted = _productHandler.GetAsync(id);
+            await _productHandler.DeleteAsync(id);
+            Console.Write("The product with ID: {0} has been deleted.", id);
+            return NoContent();
+        }
+        catch (EntityNotFoundException ex)
+        {
+            return NotFound();  
+        }
+
     }
 }
