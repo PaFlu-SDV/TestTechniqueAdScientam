@@ -23,6 +23,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\..\src\TestTechnique.Persistence\TestTechnique.Persistence.csproj" />
+      <ProjectReference Include="..\TestTechnique.WebApi.Test\TestTechnique.WebApi.Test.csproj" />
     </ItemGroup>
 
 </Project>

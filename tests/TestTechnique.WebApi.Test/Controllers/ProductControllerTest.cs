@@ -7,8 +7,6 @@ using Moq;
 using TestTechnique.Application.Commons;
 using TestTechnique.Application.Contracts;
 using TestTechnique.Domain.Models;
-using TestTechnique.Domain.Repositories;
-using TestTechnique.Persistence.Repositories;
 using TestTechnique.WebApi.Controllers;
 using Xunit;
 
