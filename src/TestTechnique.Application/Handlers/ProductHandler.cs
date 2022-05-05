@@ -25,10 +25,9 @@ public class ProductHandler : IProductHandler
         return Task.FromResult(products.AsEnumerable());
     }
 
-    public async Task<ProductDto> GetAsync(Guid id)
+    public Task<ProductDto> GetAsync(Guid id)
     {
-        var dto = ProductAdapter.ToProductDTO(_productRepository.GetAsync(id).Result);
-        return dto;
+        return Task.Run(() => ProductAdapter.ToProductDTO(_productRepository.GetAsync(id).Result));
     }
 
     public Task<Guid> AddAsync(ProductDto productDto)

@@ -42,5 +42,25 @@ public class ProductHandlertest
         var content = Assert.IsAssignableFrom<IEnumerable<ProductDto>>(response);
         Assert.NotNull(content);
     }
+
+    [Fact]
+    public async Task Get_One()
+    {
+        // Arrange
+        _productRepository
+            .Setup(x => x.GetAsync(It.IsAny<Guid>()))
+            .ReturnsAsync(new Product());
+
+        // Act
+        var response = await _productHandler.GetAsync(Guid.NewGuid());
+
+        // Assert
+        Assert.NotNull(response);
+        var content = Assert.IsAssignableFrom<ProductDto>(response);
+        Assert.NotNull(content.Name);
+        Assert.True(content.Price != 0);
+        Assert.NotNull(content.Description);
+
+    }
 }
 
