@@ -1,0 +1,4 @@
+﻿[*.cs]
+
+# CS8620: Impossible d'utiliser l'argument pour le paramètre, car il existe des différences dans l'acceptation des valeurs null par les types référence.
+dotnet_diagnostic.CS8620.severity = none

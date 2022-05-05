@@ -22,7 +22,7 @@ public class ProductRepository : IProductRepository
         var product = await _dbContext.Products.FindAsync(id);
         if(product == null)
         {
-            throw new ArgumentNullException(id.ToString());
+            return null;    
         }
         else
         {
@@ -49,8 +49,16 @@ public class ProductRepository : IProductRepository
 
     public Task UpdateAsync(Product entity)
     {
-        _dbContext.Products.Update(entity);
-        return _dbContext.SaveChangesAsync();
+        var product = _dbContext.Products.FindAsync(entity.Id);
+        if (product == null)
+        {
+            return null;
+        }
+        else
+        {
+            _dbContext.Products.Update(entity);
+            return _dbContext.SaveChangesAsync();
+        }
         
     }
 
@@ -61,8 +69,16 @@ public class ProductRepository : IProductRepository
 
     public Task DeleteAsync(Product entity)
     {
-        _dbContext.Remove(entity);
-        return _dbContext.SaveChangesAsync();
+        var product =  _dbContext.Products.FindAsync(entity.Id);
+        if (product == null)
+        {
+            return null;
+        }
+        else
+        {
+            _dbContext.Remove(entity);
+            return _dbContext.SaveChangesAsync();
+        }       
     }
 
     public Task DeleteAsync(IEnumerable<Product> entities)

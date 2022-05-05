@@ -30,62 +30,39 @@ public class ProductController : ControllerBase
 
     [HttpGet("{id:guid}")]
     public async Task<IActionResult> GetAsync([FromRoute] Guid id)
-    { 
-        try
-        {
-            var product = await _productHandler.GetAsync(id);
-            return Ok(ProductAdapter.ToProductModel(product));
-        }
-        catch (Exception ex)
-        {
-            return NotFound();
-        }
+    {
+        var product = await _productHandler.GetAsync(id);
 
+        if (product == null) return NotFound();
+        return Ok(ProductAdapter.ToProductModel(product));
     }
 
     [HttpPost]
     public async Task<IActionResult> Post([FromQuery] ProductDto product)
-    {   
-        try
-        {
-            await _productHandler.AddAsync(product);
-            _logger.LogInformation($"The {product.Name} has been added with the ID:{product.Id}.");
-            return CreatedAtAction("Get", product);
-        }
-        catch (EntityNotFoundException ex)
-        {
-            return NotFound();
-        }
+    {
+        await _productHandler.AddAsync(product);
+        _logger.LogInformation($"The {product.Name} has been added with the ID:{product.Id}.");
+        return CreatedAtAction("Get", product);
     }
 
     [HttpPut("{id:guid}")]
     public async Task<IActionResult> Put([FromHeader] Guid id, [FromRoute] ProductDto product)
     {
-        try
-        {
-            await _productHandler.UpdateAsync(product);
-            return new OkObjectResult(ProductAdapter.ToProductModel(product));
-        }
-        catch (EntityNotFoundException ex)
-        {
-            return NotFound();
-        }
+        var toDelete = _productHandler.GetAsync(id);
+        if (toDelete.Result == null) return NotFound();
+
+        await _productHandler.UpdateAsync(product);
+        return new OkObjectResult(ProductAdapter.ToProductModel(product));
     }
 
     [HttpDelete]
     public async Task<IActionResult> Delete([FromHeader] Guid id)
     {
-        try
-        {
-            var toDeleted = _productHandler.GetAsync(id);
-            await _productHandler.DeleteAsync(id);
-            Console.Write("The product with ID: {0} has been deleted.", id);
-            return NoContent();
-        }
-        catch (EntityNotFoundException ex)
-        {
-            return NotFound();  
-        }
+        var toDelete = _productHandler.GetAsync(id);
+        if (toDelete.Result == null) return NotFound();
 
+        await _productHandler.DeleteAsync(id);
+        Console.Write("The product with ID: {0} has been deleted.", id);
+        return NoContent();
     }
 }

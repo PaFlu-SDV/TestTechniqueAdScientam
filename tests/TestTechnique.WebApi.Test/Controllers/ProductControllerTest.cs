@@ -18,7 +18,6 @@ public class ProductControllerTest
 {
     private readonly ProductController _productController;
     private readonly Mock<IProductHandler> _productHandler;
-    private readonly Mock<IProductRepository> _productRepository;
 
 
 
@@ -63,23 +62,23 @@ public class ProductControllerTest
         Assert.NotNull(content.Value); 
         Assert.IsType<Product>(content.Value);
     }
-    
+
     [Fact]
-    public async Task Get_One_NotFound()
+    public void Get_One_NotFound()
     {
         // Arrange
         _productHandler
             .Setup(x => x.GetAsync(It.IsAny<Guid>()))
-            .ReturnsAsync(value: (ProductDto) null);
-        
+            .ReturnsAsync(value: null);
+
         // Act
-        var response =  _productController.GetAsync(Guid.NewGuid());
-    
+        var response = _productController.GetAsync(Guid.NewGuid());
+
         // Assert
         Assert.NotNull(response);
-        Assert.IsAssignableFrom<NotFoundResult>(response);
+        Assert.IsAssignableFrom<NotFoundResult>(response.Result);
     }
-    
+
     [Fact]
     public async Task Post()
     {
@@ -124,7 +123,7 @@ public class ProductControllerTest
         // Arrange
         _productHandler
             .Setup(x => x.GetAsync(It.IsAny<Guid>()))
-            .ReturnsAsync((ProductDto) null);
+            .ReturnsAsync(value: null);
         _productHandler
             .Setup(x => x.UpdateAsync(It.IsAny<ProductDto>()));
         
@@ -160,7 +159,7 @@ public class ProductControllerTest
         // Arrange
         _productHandler
             .Setup(x => x.GetAsync(It.IsAny<Guid>()))
-            .ReturnsAsync(value: (ProductDto) null);
+            .ReturnsAsync(value: null);
         _productHandler
             .Setup(x => x.DeleteAsync(It.IsAny<Guid>()));
         

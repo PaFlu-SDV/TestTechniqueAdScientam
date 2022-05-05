@@ -27,45 +27,23 @@ public class ProductHandler : IProductHandler
 
     public async Task<ProductDto> GetAsync(Guid id)
     {
-        var dto = ProductAdapter.ToProductDTO(_productRepository.GetAsync(id).Result);
-        return dto;
+        return ProductAdapter.ToProductDTO(_productRepository.GetAsync(id).Result);
     }
 
     public Task<Guid> AddAsync(ProductDto productDto)
     {
-        if(_productRepository.GetAsync(productDto.Id).Result != null)
-        {
-            throw new EntityNotFoundException();
-        }
-        else
-        {
-            return _productRepository.AddAsync(ProductAdapter.ToProductModel(productDto));
-        }
+        return _productRepository.AddAsync(ProductAdapter.ToProductModel(productDto));
     }
 
     public async Task<ProductDto> UpdateAsync(ProductDto productDto)
     {
-        if (_productRepository.GetAsync(productDto.Id).Result != null)
-        {
-            throw new EntityNotFoundException();
-        }
-        else
-        {
-            await _productRepository.UpdateAsync(ProductAdapter.ToProductModel(productDto));
-            return ProductAdapter.ToProductDTO(_productRepository.GetAsync(productDto.Id).Result);
-        }
+        await _productRepository.UpdateAsync(ProductAdapter.ToProductModel(productDto));
+        return ProductAdapter.ToProductDTO(_productRepository.GetAsync(productDto.Id).Result);
     }
 
     public Task DeleteAsync(Guid id)
     {
-        if (_productRepository.GetAsync(id).Result != null)
-        {
-            throw new EntityNotFoundException();
-        }
-        else
-        {
-            var product = _productRepository.GetAsync(id).Result;
-            return _productRepository.DeleteAsync(product);
-        }
+        var product = _productRepository.GetAsync(id).Result;
+        return _productRepository.DeleteAsync(product);
     }
 }
