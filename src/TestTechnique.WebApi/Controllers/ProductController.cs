@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using TestTechnique.Application.Adapter;
 using TestTechnique.Application.Commons;
 using TestTechnique.Application.Contracts;
+using TestTechnique.Domain.Exceptions;
 using TestTechnique.Domain.Repositories;
 using TestTechnique.Persistence.Repositories;
 
@@ -30,9 +31,16 @@ public class ProductController : ControllerBase
     [HttpGet("{id:guid}")]
     public async Task<IActionResult> GetAsync([FromRoute] Guid id)
     { 
+        try
+        {
             var product = await _productHandler.GetAsync(id);
-            if(product == null) return NotFound();
             return Ok(ProductAdapter.ToProductModel(product));
+        }
+        catch (Exception ex)
+        {
+            return NotFound();
+        }
+
     }
 
     [HttpPost]
@@ -44,7 +52,7 @@ public class ProductController : ControllerBase
             _logger.LogInformation($"The {product.Name} has been added with the ID:{product.Id}.");
             return CreatedAtAction("Get", product);
         }
-        catch (Exception ex)
+        catch (EntityNotFoundException ex)
         {
             return NotFound();
         }
@@ -58,7 +66,7 @@ public class ProductController : ControllerBase
             await _productHandler.UpdateAsync(product);
             return new OkObjectResult(ProductAdapter.ToProductModel(product));
         }
-        catch (Exception ex)
+        catch (EntityNotFoundException ex)
         {
             return NotFound();
         }
@@ -74,7 +82,7 @@ public class ProductController : ControllerBase
             Console.Write("The product with ID: {0} has been deleted.", id);
             return NoContent();
         }
-        catch (Exception ex)
+        catch (EntityNotFoundException ex)
         {
             return NotFound();  
         }

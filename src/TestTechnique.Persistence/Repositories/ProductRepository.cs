@@ -1,4 +1,3 @@
-using TestTechnique.Domain.Exceptions;
 using TestTechnique.Domain.Models;
 using TestTechnique.Domain.Repositories;
 
@@ -15,7 +14,7 @@ public class ProductRepository : IProductRepository
 
     public Task<IEnumerable<Product>> GetAllAsync()
     {
-        return Task.Run(() => _dbContext.Products.ToList().AsEnumerable()); ;
+        return Task.Run(() => _dbContext.Products.AsEnumerable());
     }
 
     public async Task<Product> GetAsync(Guid id)
@@ -23,7 +22,7 @@ public class ProductRepository : IProductRepository
         var product = await _dbContext.Products.FindAsync(id);
         if(product == null)
         {
-            throw new EntityNotFoundException(id.ToString());
+            throw new ArgumentNullException(id.ToString());
         }
         else
         {

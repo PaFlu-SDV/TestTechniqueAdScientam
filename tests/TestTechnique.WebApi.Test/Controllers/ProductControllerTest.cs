@@ -18,6 +18,8 @@ public class ProductControllerTest
 {
     private readonly ProductController _productController;
     private readonly Mock<IProductHandler> _productHandler;
+    private readonly Mock<IProductRepository> _productRepository;
+
 
 
     public ProductControllerTest()
